@@ -1,0 +1,63 @@
+#include <Stepper.h>
+
+const int stepsPerRevolution = 2048; //2048一圈
+Stepper myStepper(stepsPerRevolution, 3, 5, 4, 6);
+Stepper mysecond(stepsPerRevolution, 6, 4, 5, 3);
+int trigPin = 11;
+int echoPin = 12;
+long duration, cm, inches;
+int ledPin = 13;
+int pirPin = 8;
+int pirValue;
+
+
+void setup() {
+  myStepper.setSpeed(10); //速度
+  Serial.begin(9600);
+    for(int pinNumber = 7; pinNumber<9; pinNumber++)
+    pinMode(pinNumber, OUTPUT);
+    digitalWrite(7, LOW);
+  Serial.println("clockwise");
+  myStepper.step(stepsPerRevolution);
+  mysecond.setSpeed(10);
+  Serial.begin(9600);
+  Serial.println("offset");
+  mysecond.step(stepsPerRevolution);
+  delay(50);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+  cm = (duration/2)/29.1;
+  inches = (duration/2)/74;
+  if(cm < 20){
+    digitalWrite(8, LOW);
+    digitalWrite(7, HIGH);
+    myStepper.step(stepsPerRevolution);
+  }else if(cm >= 20 ){
+    digitalWrite(8, HIGH);
+    digitalWrite(7, HIGH);
+    
+  }
+  pirValue = digitalRead(pirPin);
+  digitalWrite(ledPin, pirValue);
+  Serial.print(inches);
+  Serial.print("in,");
+  Serial.print(cm);
+  Serial.print("cm,");
+  Serial.println();
+  
+  
+  // step one revolution  in one direction:
+
+}
